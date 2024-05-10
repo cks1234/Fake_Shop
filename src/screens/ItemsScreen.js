@@ -1,46 +1,66 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Title from '../components/Title';
 import Button from '../components/Button';
-import LoadingIndicator from '../components/loadingindicator';
 
 function ItemsScreen({ route, navigation }) {
-    const { category } = route.params;
+    const { category } = route.params || {};
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!category) {
+            return;
+        }
+
         fetch(`https://fakestoreapi.com/products/category/${encodeURIComponent(category)}`)
-            .then(res => res.json())
-            .then(data => {
-                const augmentedData = data.map(item => ({
+            .then((res) => res.json())
+            .then((data) => {
+                const augmentedData = data.map((item) => ({
                     ...item,
-                    sold: Math.floor(Math.random() * 1000),  // Randomly generating sold units
-                    rate: (Math.random() * 5).toFixed(2)  // Randomly generating a rating between 0 and 5
+                    sold: Math.floor(Math.random() * 1000), // Randomly generating sold units
+                    rate: (Math.random() * 5).toFixed(2), // Randomly generating a rating between 0 and 5
                 }));
                 setItems(augmentedData);
                 setLoading(false);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Error fetching items:', error);
                 setLoading(false);
             });
     }, [category]);
 
     const handleBack = () => {
-        navigation.goBack();  
+        navigation.goBack();
     };
 
     const handleItemPress = (item) => {
         navigation.navigate('ItemDetailScreen', { item });
     };
+
     if (loading) {
-        return <LoadingIndicator color="#0000ff" />;
+        return (
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
+
+    if (!category) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>No category selected</Text>
+                <Button iconName="arrow-back" title="Back" onPress={handleBack} />
+            </View>
+        );
     }
 
     return (
         <View style={styles.container}>
             <Title style={styles.header}>{category}</Title>
+            {items.length === 0 ? (
+                <Text style={styles.emptyMessage}>No items available in this category.</Text>
+            ) : (
                 <FlatList
                     data={items}
                     renderItem={({ item }) => (
@@ -56,17 +76,32 @@ function ItemsScreen({ route, navigation }) {
                             </View>
                         </TouchableOpacity>
                     )}
-                    keyExtractor={item => item.id.toString()}
+                    keyExtractor={(item) => item.id.toString()}
                 />
+            )}
             <View style={styles.buttonsContainer}>
                 <Button iconName="arrow-back" title="Back" onPress={handleBack} />
             </View>
         </View>
-        
     );
 }
 
 const styles = StyleSheet.create({
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 18,
+        marginBottom: 10,
+    },
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     container: {
         flex: 1,
         marginTop: 20,
@@ -101,9 +136,14 @@ const styles = StyleSheet.create({
         color: 'green',
     },
     buttonsContainer: {
-        padding: 10, 
+        padding: 10,
         flexDirection: 'row',
-        justifyContent: 'center', 
+        justifyContent: 'center',
+    },
+    emptyMessage: {
+        textAlign: 'center',
+        fontSize: 16,
+        color: 'gray',
     },
 });
 

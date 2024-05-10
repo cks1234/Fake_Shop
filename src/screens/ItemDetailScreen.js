@@ -1,21 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { useDispatch } from 'react-redux';
 import Button from '../components/Button';
 import Title from '../components/Title';
+import { addItem } from '../store/cartSlice';
 
 function ItemDetailScreen({ route, navigation }) {
     const { item } = route.params;
-    const [isLoading, setLoading] = useState(true);  // State to manage loading indicator
+    const [isLoading, setLoading] = useState(true);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            setLoading(false);  // Set loading to false after data is 'loaded'
-        }, 2000);  // Delay of 2000 milliseconds (2 seconds)
+            setLoading(false);
+        }, 2000);
 
-        return () => clearTimeout(timer);  // Cleanup the timer
+        return () => clearTimeout(timer);
     }, []);
 
+    const handleBack = () => {
+        navigation.goBack();
+    };
 
+    const handleAddToCart = () => {
+        dispatch(addItem(item));
+    };
+
+    const handleCart = () => {
+        navigation.navigate('CartScreen');
+    };
 
     if (isLoading) {
         return (
@@ -25,10 +38,6 @@ function ItemDetailScreen({ route, navigation }) {
         );
     }
 
-    const handleBack = () => {
-        navigation.goBack();
-    };
-
     return (
         <ScrollView style={styles.container}>
             <Title>Product Details</Title>
@@ -37,12 +46,14 @@ function ItemDetailScreen({ route, navigation }) {
             <Text style={styles.price}>Price: ${item.price}</Text>
             <Text style={styles.sold}>Units Sold: {item.sold}</Text>
             <Text style={styles.rate}>Rating: {item.rate} / 5</Text>
-            <Text style={styles.title}>Description:</Text>
-            <Text style={styles.description}>{item.description}</Text>
             <View style={styles.buttonContainer}>
                 <Button iconName="arrow-back" title="Back" onPress={handleBack} />
-                <Button iconName="cart-outline" title="Cart" />
+                <Button iconName="cart-outline" title="Add to Cart" onPress={handleAddToCart} />
+    
             </View>
+            <Text style={styles.title}>Description:</Text>
+            <Text style={styles.description}>{item.description}</Text>
+
         </ScrollView>
     );
 }
@@ -96,7 +107,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginBottom: 50,
+        marginBottom: 20,
     },
 });
 

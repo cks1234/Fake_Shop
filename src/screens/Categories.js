@@ -4,7 +4,7 @@ import Title from '../components/Title';
 
 const Categories = ({ navigation }) => {
     const [categories, setCategories] = useState([]);
-    const [isLoading, setLoading] = useState(true);  
+    const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -17,12 +17,12 @@ const Categories = ({ navigation }) => {
             })
             .then(data => {
                 setCategories(data);
-                setLoading(false); 
+                setLoading(false);
             })
             .catch(error => {
                 console.error('Error fetching categories:', error);
                 setError(error.message);
-                setLoading(false);  
+                setLoading(false);
             });
     }, []);
 
@@ -41,14 +41,14 @@ const Categories = ({ navigation }) => {
         <View style={styles.container}>
             <Title>Categories</Title>
             {isLoading ? (
-                <ActivityIndicator size="large" color="#0000ff" />  
+                <ActivityIndicator size="large" color="#0000ff" />
             ) : error ? (
                 <Text>Error loading categories: {error}</Text>
             ) : (
                 <FlatList
                     data={categories}
                     renderItem={renderItem}
-                    keyExtractor={item => item}
+                    keyExtractor={(item) => item}
                 />
             )}
         </View>
@@ -61,23 +61,21 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginLeft: 10,
         marginRight: 10,
-        
     },
     item: {
         padding: 10,
-        marginBottom:10,
-        justifyContent: 'center', 
-        alignItems: 'center',   
+        marginBottom: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
         height: 60,
-        backgroundColor:'lightgray',
-        borderWidth:1,
-        borderColor:'black',
-        borderRadius:5
+        backgroundColor: 'lightgray',
+        borderWidth: 1,
+        borderColor: 'black',
+        borderRadius: 5,
     },
     title: {
         fontSize: 16,
-        color:'blue'
-        
+        color: 'blue',
     },
 });
 

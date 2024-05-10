@@ -1,37 +1,34 @@
 import React, { useEffect } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
 
-const SplashScreen = ({ navigation }) => {
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            navigation.replace('Categories');  
-        }, 3000); 
+function SplashScreen({ navigation }) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigation.replace('Main');
+    }, 2000);
 
-        return () => clearTimeout(timer);  
-    }, [navigation]);
+    return () => clearTimeout(timer);
+  }, [navigation]);
 
-    return (
-        <View style={styles.container}>
-            <Image
-                source={require('../photos/logo.jpg')} 
-                style={styles.fullscreenImage}
-            />
-        </View>
-    );
-};
+  return (
+    <View style={styles.container}>
+      <Image source={require('../photos/logo.jpg')} style={styles.image} />
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-    },
-    fullscreenImage: {
-        position: 'absolute',
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
-    },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff', 
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+  },
 });
 
 export default SplashScreen;
