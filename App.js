@@ -3,12 +3,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
+import { View } from 'react-native';
 import Categories from './src/screens/Categories';
 import ItemsScreen from './src/screens/ItemsScreen';
 import ItemDetailScreen from './src/screens/ItemDetailScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import CartScreen from './src/screens/CartScreen';
+import CartBadge from './src/components/CartBadge';
 import { store } from './src/store/store';
 
 const Stack = createNativeStackNavigator();
@@ -25,19 +27,28 @@ function StackNavigator() {
 }
 
 function BottomTabNavigator() {
+  const cartItemsCount = useSelector((state) => state.cart.items.reduce((total, item) => total + item.quantity, 0));
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
+          let iconBadge = null;
 
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Cart') {
             iconName = focused ? 'cart' : 'cart-outline';
+            iconBadge = <CartBadge count={cartItemsCount} />;
           }
 
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return (
+            <View>
+              <Ionicons name={iconName} size={size} color={color} />
+              {iconBadge}
+            </View>
+          );
         },
         tabBarActiveTintColor: 'tomato',
         tabBarInactiveTintColor: 'gray',
@@ -50,6 +61,16 @@ function BottomTabNavigator() {
 }
 
 function App() {
+  const [isSplashVisible, setSplashVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplashVisible(false);
+    }, 2000); // Adjust the delay as needed
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Provider store={store}>
       <NavigationContainer>
