@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { signIn } from '../store/authSlice';
-import Button from '../components/Button'; // Assuming you have a Button component
+import Button from '../components/Button'; 
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
 export default SignInScreen;
 
 const signInUser = async ({ email, password }) => {
-  const url = `http://192.168.1.23:3000/users/signin`; // Replace with your local IP address
+  const url = `http://192.168.1.23:3000/users/signin`; 
   const user = { email, password };
   try {
     console.log('Sending request to:', url);

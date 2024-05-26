@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { updateUser } from '../store/authSlice';
-import Button from '../components/Button'; // Assuming you have a Button component
+import Button from '../components/Button'; 
 import { Ionicons } from '@expo/vector-icons';
 
 const UpdateProfileScreen = () => {

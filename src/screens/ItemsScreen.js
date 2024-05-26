@@ -18,8 +18,6 @@ function ItemsScreen({ route, navigation }) {
             .then((data) => {
                 const augmentedData = data.map((item) => ({
                     ...item,
-                    sold: Math.floor(Math.random() * 1000), // Randomly generating sold units
-                    rate: (Math.random() * 5).toFixed(2), // Randomly generating a rating between 0 and 5
                 }));
                 setItems(augmentedData);
                 setLoading(false);

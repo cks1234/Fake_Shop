@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 
 function CartScreen() {
   const cartItems = useSelector((state) => state.cart.items);
-  const user = useSelector((state) => state.auth.user); // Assuming user information is stored in auth state
+  const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const navigation = useNavigation();
 

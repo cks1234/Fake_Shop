@@ -36,7 +36,7 @@ export const fetchOrders = createAsyncThunk('orders/fetchOrders', async (token, 
 export const updateOrderStatus = createAsyncThunk('orders/updateOrderStatus', async ({ orderId, isPaid, isDelivered }, { getState }) => {
   const token = getState().auth.token;
   const response = await fetch(`http://192.168.1.23:3000/orders/updateorder`, {
-    method: 'POST', // Assuming POST based on your provided cURL
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

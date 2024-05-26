@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 1,
     borderRadius: 5,
-    paddingBottom: 20, // Added padding at the bottom for the button
+    paddingBottom: 20, 
   },
   orderHeader: {
     flexDirection: 'row',
