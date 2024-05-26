@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableHighlight, ActivityIndicator } from 'react-native';
+import { useSelector } from 'react-redux';
 import Title from '../components/Title';
 
 const Categories = ({ navigation }) => {
     const [categories, setCategories] = useState([]);
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const userName = useSelector((state) => state.auth.user?.name); // Get the user's name from the Redux store
 
     useEffect(() => {
         fetch('https://fakestoreapi.com/products/categories')
@@ -16,7 +18,11 @@ const Categories = ({ navigation }) => {
                 return response.json();
             })
             .then(data => {
-                setCategories(data);
+                if (userName) {
+                    setCategories([...data, userName]);  // Add the user's name to the categories list
+                } else {
+                    setCategories(data);
+                }
                 setLoading(false);
             })
             .catch(error => {
@@ -24,18 +30,27 @@ const Categories = ({ navigation }) => {
                 setError(error.message);
                 setLoading(false);
             });
-    }, []);
+    }, [userName]);
 
-    const renderItem = ({ item }) => (
-        <TouchableHighlight
-            onPress={() => navigation.navigate('ItemsScreen', { category: item })}
-            underlayColor="#DDD"
-        >
-            <View style={styles.item}>
-                <Text style={styles.title}>{item}</Text>
-            </View>
-        </TouchableHighlight>
-    );
+    const renderItem = ({ item }) => {
+        if (item === userName) {
+            return (
+                <View style={styles.userNameContainer}>
+                    <Text style={styles.userName}>{item}</Text>
+                </View>
+            );
+        }
+        return (
+            <TouchableHighlight
+                onPress={() => navigation.navigate('ItemsScreen', { category: item })}
+                underlayColor="#DDD"
+            >
+                <View style={styles.item}>
+                    <Text style={styles.title}>{item}</Text>
+                </View>
+            </TouchableHighlight>
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -43,12 +58,12 @@ const Categories = ({ navigation }) => {
             {isLoading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : error ? (
-                <Text>Error loading categories: {error}</Text>
+                <Text style={styles.error}>Error loading categories: {error}</Text>
             ) : (
                 <FlatList
                     data={categories}
                     renderItem={renderItem}
-                    keyExtractor={(item) => item}
+                    keyExtractor={(item, index) => index.toString()}
                 />
             )}
         </View>
@@ -74,6 +89,19 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     title: {
+        fontSize: 16,
+        color: 'blue',
+    },
+    error: {
+        fontSize: 16,
+        color: 'red',
+        textAlign: 'center',
+    },
+    userNameContainer: {
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    userName: {
         fontSize: 16,
         color: 'blue',
     },

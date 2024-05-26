@@ -1,32 +1,31 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-function CartBadge({ count }) {
-  if (count <= 0) return null;
+const CartBadge = ({ count }) => {
+  if (count === 0) return null;
 
   return (
-    <View style={styles.badgeContainer}>
-      <Text style={styles.badgeText}>{count}</Text>
+    <View style={styles.badge}>
+      <Text style={styles.count}>{count}</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  badgeContainer: {
+  badge: {
     position: 'absolute',
     right: -10,
-    top: -10,
-    backgroundColor: 'tomato',
-    borderRadius: 8,
-    width: 16,
-    height: 16,
+    top: -5,
+    backgroundColor: 'red',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  badgeText: {
+  count: {
     color: 'white',
-    fontSize: 10,
-    fontWeight: 'bold',
+    fontSize: 12,
   },
 });
 

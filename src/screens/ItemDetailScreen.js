@@ -1,34 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { addToCart } from '../store/cartSlice';
 import Button from '../components/Button';
 import Title from '../components/Title';
-import { addItem } from '../store/cartSlice';
 
-function ItemDetailScreen({ route, navigation }) {
+const ItemDetailScreen = ({ route, navigation }) => {
     const { item } = route.params;
+    const [product, setProduct] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 2000);
-
-        return () => clearTimeout(timer);
-    }, []);
-
-    const handleBack = () => {
-        navigation.goBack();
-    };
-
-    const handleAddToCart = () => {
-        dispatch(addItem(item));
-    };
-
-    const handleCart = () => {
-        navigation.navigate('CartScreen');
-    };
+        fetch(`https://fakestoreapi.com/products/${item.id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setProduct(data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching product:', error);
+                setLoading(false);
+            });
+    }, [item.id]);
 
     if (isLoading) {
         return (
@@ -38,25 +37,40 @@ function ItemDetailScreen({ route, navigation }) {
         );
     }
 
+    if (!product) {
+        return (
+            <View style={styles.container}>
+                <Text>Error loading product details.</Text>
+            </View>
+        );
+    }
+
     return (
         <ScrollView style={styles.container}>
             <Title>Product Details</Title>
-            <Image source={{ uri: item.image }} style={styles.image} />
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.price}>Price: ${item.price}</Text>
-            <Text style={styles.sold}>Units Sold: {item.sold}</Text>
-            <Text style={styles.rate}>Rating: {item.rate} / 5</Text>
+            <Image source={{ uri: product.image }} style={styles.image} />
+            <Text style={styles.title}>{product.title}</Text>
+            <Text style={styles.rating}>Rating: {product.rating.rate} ({product.rating.count} sold)</Text>
+            <Text style={styles.price}>${product.price}</Text>
+            <Text style={styles.description}>{product.description}</Text>
             <View style={styles.buttonContainer}>
-                <Button iconName="arrow-back" title="Back" onPress={handleBack} />
-                <Button iconName="cart-outline" title="Add to Cart" onPress={handleAddToCart} />
-    
+                <Button
+                    iconName="arrow-back"
+                    title="Back"
+                    onPress={() => navigation.goBack()}
+                />
+                <Button
+                    iconName="cart-outline"
+                    title="Add to Cart"
+                    onPress={() => {
+                        dispatch(addToCart(product));
+                        Alert.alert("Added to Cart", "The item has been added to your cart.");
+                    }}
+                />
             </View>
-            <Text style={styles.title}>Description:</Text>
-            <Text style={styles.description}>{item.description}</Text>
-
         </ScrollView>
     );
-}
+};
 
 const styles = StyleSheet.create({
     loaderContainer: {
@@ -81,19 +95,15 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
+    rating: {
+        fontSize: 18,
+        marginBottom: 10,
+    },
     price: {
         fontSize: 20,
         fontWeight: 'bold',
         color: 'green',
         marginBottom: 10,
-    },
-    sold: {
-        fontSize: 16,
-        marginBottom: 10,
-    },
-    rate: {
-        fontSize: 16,
-        marginBottom: 20,
     },
     description: {
         fontSize: 16,
@@ -106,7 +116,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         marginBottom: 20,
     },
 });

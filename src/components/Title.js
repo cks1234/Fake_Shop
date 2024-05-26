@@ -7,18 +7,10 @@ const Title = ({ children }) => {
 
 const styles = StyleSheet.create({
   title: {
-    alignItems: 'center',
-    justifyContent: 'center',
     fontSize: 24,
-    borderRadius:5,
-    color:'white',
     fontWeight: 'bold',
-    padding:10,
-    marginBottom:10,
+    marginBottom: 20,
     textAlign: 'center',
-    backgroundColor:'skyblue',
-    borderColor:'black',
-    borderWidth:2,
   },
 });
 
